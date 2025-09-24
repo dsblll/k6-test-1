@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: .
+    ports:
+      - "8000:8000"
+    networks:
+      - test-network
+
+  k6:
+    image: grafana/k6:latest
+    volumes:
+      - ./k6-tests:/tests
+    command: run /tests/load-test.js
+    depends_on:
+      - fastapi
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
